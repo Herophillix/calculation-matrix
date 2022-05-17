@@ -17,13 +17,12 @@ public class GameManager {
             }
         }
 
-        EquationManager eq = new EquationManager();
         Random rand = new Random();
         int index = 0;
 
         for(int i = 0; i < numOfEquations; ++i)
         {
-            String[] equations = eq.CreateEquation(1, 9);
+            String[] equations = EquationManager.CreateEquation(1, 9);
             for(String value: equations)
             {
                 boolean isGridSmallest = false;

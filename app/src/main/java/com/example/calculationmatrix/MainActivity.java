@@ -100,6 +100,18 @@ public class MainActivity extends AppCompatActivity {
         }
         if(!signButton.IsOccupied())
             return;
+        String a = digitButtons.get(0).GetText();
+        String sign = signButton.GetText();
+        String b = digitButtons.get(1).GetText();
+        String c = digitButtons.get(2).GetText();
+        if(EquationManager.CheckEquation(a, sign, b, c))
+        {
+            for(EquationButton digits: digitButtons)
+            {
+                digits.RemoveOccupyingButton(true);
+            }
+            signButton.RemoveOccupyingButton(true);
+        }
     }
 
     public static boolean isNumeric(String str) {
