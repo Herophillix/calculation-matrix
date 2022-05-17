@@ -2,20 +2,35 @@ package com.example.calculationmatrix;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.sql.Time;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private final int HORIZONTAL_SIZE = 3;
     private final int VERTICAL_SIZE = 3;
+    final long TIME_LIMIT = 30000;
+    final long INTERVAL = 50;
 
     private GameManager gameManager;
     private ArrayList<EquationButton> digitButtons;
     private EquationButton signButton;
+
+    ProgressBar progressBar;
+    CountDownTimer countDownTimer;
+    long timeLeft;
+
+    int userScore;
+    TextView scoreText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         InitializeGameManager();
         InitializeEquationButtons();
+        InitializeProgressBar();
+        InitializeScore();
     }
 
     private void InitializeGameManager()
@@ -40,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
         buttons[1][2] = findViewById(R.id.grid_8);
         buttons[2][2] = findViewById(R.id.grid_9);
 
+        final MediaPlayer GRID_CLICK = MediaPlayer.create(this, R.raw.grid_click);
+
         for(int i = 0; i < HORIZONTAL_SIZE; ++i)
         {
             for(int j = 0; j < VERTICAL_SIZE; ++j)
@@ -51,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         OnGridButtonSelected(gridButton);
+                        GRID_CLICK.start();
                     }
                 });
             }
@@ -59,12 +79,81 @@ public class MainActivity extends AppCompatActivity {
 
     private void InitializeEquationButtons()
     {
-        digitButtons = new ArrayList<>();
-        digitButtons.add(new EquationButton(findViewById(R.id.lhs_1)));
-        digitButtons.add(new EquationButton(findViewById(R.id.lhs_2)));
-        digitButtons.add(new EquationButton(findViewById(R.id.ans)));
+        final MediaPlayer GRID_RETURN = MediaPlayer.create(this, R.raw.grid_return);
 
-        signButton = new EquationButton(findViewById(R.id.lhs_sign));
+        digitButtons = new ArrayList<>();
+        digitButtons.add(new EquationButton(findViewById(R.id.lhs_1), GRID_RETURN));
+        digitButtons.add(new EquationButton(findViewById(R.id.lhs_2), GRID_RETURN));
+        digitButtons.add(new EquationButton(findViewById(R.id.ans), GRID_RETURN));
+
+        signButton = new EquationButton(findViewById(R.id.lhs_sign), GRID_RETURN);
+    }
+
+    private void InitializeProgressBar()
+    {
+        progressBar =(ProgressBar)findViewById(R.id.progressbar);
+        progressBar.setProgress(0);
+
+        CreateCountdownTimer(TIME_LIMIT, INTERVAL);
+    }
+
+    private void CreateCountdownTimer(long timeLimit, long interval)
+    {
+        if(countDownTimer != null)
+            countDownTimer.cancel();
+        MainActivity instance = this;
+        countDownTimer = new CountDownTimer(timeLimit,interval) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeft = millisUntilFinished;
+                progressBar.setProgress((int)((TIME_LIMIT - timeLeft)/(double)TIME_LIMIT * 100));
+            }
+
+            @Override
+            public void onFinish() {
+                progressBar.setProgress(100);
+
+                final MediaPlayer GAME_OVER = MediaPlayer.create(instance, R.raw.game_over);
+                GAME_OVER.start();
+
+                Toast toast = Toast.makeText(getApplicationContext(), "Game Over!", Toast.LENGTH_LONG);
+                toast.show();
+                CountDownTimer delay = new CountDownTimer(3000, INTERVAL) {
+                    @Override
+                    public void onTick(long l) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        finish();
+                        startActivity(getIntent());
+                    }
+                };
+                delay.start();
+            }
+        };
+        countDownTimer.start();
+    }
+
+    private void InitializeScore()
+    {
+        scoreText = findViewById(R.id.score);
+        UpdateScore();
+    }
+
+    private void UpdateScore()
+    {
+        scoreText.setText("Score: " + Integer.toString(userScore));
+    }
+
+    private void AddScore(int add_value)
+    {
+        userScore += add_value;
+        UpdateScore();
+        long added_time = Math.max(5000 - userScore * 300, 2000);
+        CreateCountdownTimer(Math.min(timeLeft + added_time , TIME_LIMIT), INTERVAL);
     }
 
     private void OnGridButtonSelected(GridButton gridButton)
@@ -106,10 +195,38 @@ public class MainActivity extends AppCompatActivity {
         {
             for(EquationButton digits: digitButtons)
             {
-                digits.RemoveOccupyingButton();
+                digits.SetEnabled(false);
             }
-            signButton.RemoveOccupyingButton();
-            gameManager.FillEmptyGridButton();
+            signButton.SetEnabled(false);
+            gameManager.SetEnabled(false);
+            final MediaPlayer EQUATION_CORRECT = MediaPlayer.create(this, R.raw.equation_correct);
+            EQUATION_CORRECT.start();
+            CountDownTimer timer = new CountDownTimer(500, INTERVAL) {
+                @Override
+                public void onTick(long l) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    for(EquationButton digits: digitButtons)
+                    {
+                        digits.SetEnabled(true);
+                        digits.RemoveOccupyingButton();
+                    }
+                    signButton.SetEnabled(true);
+                    signButton.RemoveOccupyingButton();
+                    gameManager.SetEnabled(true);
+                    gameManager.FillEmptyGridButton();
+                    AddScore(1);
+                }
+            };
+            timer.start();
+        }
+        else
+        {
+            final MediaPlayer EQUATION_WRONG = MediaPlayer.create(this, R.raw.equation_wrong);
+            EQUATION_WRONG.start();
         }
     }
 }
