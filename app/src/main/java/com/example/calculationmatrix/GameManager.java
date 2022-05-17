@@ -90,4 +90,15 @@ public class GameManager {
             emptyGridButtons.get(emptyGridButtons.size() - 1).SetValue(result);
         }
     }
+
+    public void SetEnabled(boolean enabled)
+    {
+        for(int i = 0; i < gridButtons.length; ++i)
+        {
+            for(int j = 0; j < gridButtons[i].length; ++j)
+            {
+                gridButtons[i][j].GetButton().setEnabled(enabled);
+            }
+        }
+    }
 }

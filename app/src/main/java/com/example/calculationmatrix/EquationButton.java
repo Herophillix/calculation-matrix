@@ -1,6 +1,7 @@
 package com.example.calculationmatrix;
 
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +10,7 @@ public class EquationButton {
     private Button button;
     private GridButton occupyingGridButton;
 
-    public EquationButton(Button button)
+    public EquationButton(Button button, MediaPlayer soundEffect)
     {
         this.button = button;
         button.setText("");
@@ -17,6 +18,7 @@ public class EquationButton {
             @Override
             public void onClick(View view) {
                 UndoOccupyingButton();
+                soundEffect.start();
             }
         });
         SetButtonText("");
@@ -61,5 +63,10 @@ public class EquationButton {
         boolean enabled = !text.equals("");
         button.setEnabled(enabled);
         button.setBackgroundColor(Color.parseColor(enabled ? "#ffecb8" : "#C1C1C1"));
+    }
+
+    public void SetEnabled(boolean enabled)
+    {
+        button.setEnabled(enabled);
     }
 }
