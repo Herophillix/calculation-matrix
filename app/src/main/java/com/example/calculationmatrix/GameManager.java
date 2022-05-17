@@ -18,13 +18,27 @@ public class GameManager {
         }
 
         Random rand = new Random();
-        int index = 0;
+        int x_index = 0;
+        int y_index = 0;
 
         for(int i = 0; i < numOfEquations; ++i)
         {
             String[] equations = EquationManager.CreateEquation(1, 9);
             for(String value: equations)
             {
+//                GridButton gridButton = gridButtons[x_index][y_index];
+//                gridButton.AddValue(value);
+//                ++x_index;
+//                if(x_index == 3)
+//                {
+//                    x_index = 0;
+//                    ++y_index;
+//                    if(y_index == 3)
+//                    {
+//                        y_index = 0;
+//                    }
+//                }
+
                 boolean isGridSmallest = false;
                 while(!isGridSmallest)
                 {
