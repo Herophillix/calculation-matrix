@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void InitializeGameManager()
     {
-        gameManager = new GameManager(HORIZONTAL_SIZE, VERTICAL_SIZE, 12);
+        gameManager = new GameManager(HORIZONTAL_SIZE, VERTICAL_SIZE, 9);
         Button[][] buttons = new Button[VERTICAL_SIZE][HORIZONTAL_SIZE];
 
         buttons[0][0] = findViewById(R.id.grid_1);
