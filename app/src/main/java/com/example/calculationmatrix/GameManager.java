@@ -1,5 +1,6 @@
 package com.example.calculationmatrix;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GameManager {
@@ -18,61 +19,75 @@ public class GameManager {
         }
 
         Random rand = new Random();
-        int x_index = 0;
-        int y_index = 0;
 
+        gridButtons[h-1][v-1].SetValue(EquationManager.CreateEquation(1, 9)[0]);
         for(int i = 0; i < numOfEquations; ++i)
         {
-            String[] equations = EquationManager.CreateEquation(1, 9);
-            for(String value: equations)
+            String[] equation = EquationManager.CreateEquation(1, 9);
+            for(String value: equation)
             {
-//                GridButton gridButton = gridButtons[x_index][y_index];
-//                gridButton.AddValue(value);
-//                ++x_index;
-//                if(x_index == 3)
-//                {
-//                    x_index = 0;
-//                    ++y_index;
-//                    if(y_index == 3)
-//                    {
-//                        y_index = 0;
-//                    }
-//                }
-
-                boolean isGridSmallest = false;
-                while(!isGridSmallest)
+                boolean isGridEmpty = false;
+                while(!isGridEmpty)
                 {
-                    int smallestIndex = GetLowestIndex();
                     GridButton randomGridButton = gridButtons[rand.nextInt(h)][rand.nextInt(v)];
-                    if (randomGridButton.GetValuesIndex() == smallestIndex)
+                    if(!randomGridButton.IsOccupied())
                     {
-                        randomGridButton.AddValue(value);
-                        isGridSmallest = true;
+                        randomGridButton.SetValue(value);
+                        isGridEmpty = true;
                     }
                 }
             }
         }
     }
 
-    private int GetLowestIndex()
+    public GridButton GetGrid(int x, int y)
     {
-        int smallest = -1;
+        return gridButtons[x][y];
+    }
+
+    public void FillEmptyGridButton()
+    {
+        ArrayList<GridButton> emptyGridButtons = new ArrayList<>();
+        GridButton a = null;
+        GridButton sign = null;
+        GridButton b = null;
         for(int i = 0; i < gridButtons.length; ++i)
         {
             for(int j = 0; j < gridButtons[i].length; ++j)
             {
-                int index = gridButtons[i][j].GetValuesIndex();
-                if(index < smallest || smallest == -1)
+                GridButton gridButton = gridButtons[i][j];
+                if(!gridButton.IsOccupied())
+                    emptyGridButtons.add(gridButton);
+                else if(MathHelper.isNumeric(gridButton.GetValue()))
                 {
-                    smallest = index;
+                    if (a != null && b != null)
+                    {
+                        continue;
+                    }
+                    int value = Integer.parseInt(gridButton.GetValue());
+                    if(value < 10)
+                    {
+                        if(a == null)
+                            a = gridButton;
+                        else
+                            b = gridButton;
+                    }
+                }
+                else
+                {
+                    sign = gridButton;
                 }
             }
         }
-        return smallest;
-    }
-
-    public GridButton GetGrid(int x, int y)
-    {
-        return gridButtons[x][y];
+        String[] equation = EquationManager.CreateEquation(1, 9);
+        for(int i = 0; i < emptyGridButtons.size(); ++i)
+        {
+            emptyGridButtons.get(i).SetValue(equation[i]);
+        }
+        if (!(a == null || b == null || sign == null))
+        {
+            String result = EquationManager.GetResult(a.GetValue(), sign.GetValue(), b.GetValue());
+            emptyGridButtons.get(emptyGridButtons.size() - 1).SetValue(result);
+        }
     }
 }

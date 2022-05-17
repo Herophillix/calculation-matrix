@@ -33,18 +33,19 @@ public class EquationButton {
         occupyingGridButton = gridButton;
         SetButtonText(gridButton.GetButton().getText().toString());
 
-        gridButton.TakeTopValue();
+        gridButton.TakeValue();
     }
 
     private void UndoOccupyingButton()
     {
-        occupyingGridButton.UndoTakeTopValue();
-        RemoveOccupyingButton();
+        occupyingGridButton.UndoTakeValue();
+        occupyingGridButton = null;
+        SetButtonText("");
     }
 
     public void RemoveOccupyingButton()
     {
-        occupyingGridButton.SetButtonEnabled(true);
+        occupyingGridButton.RemoveValue();
         occupyingGridButton = null;
         SetButtonText("");
     }

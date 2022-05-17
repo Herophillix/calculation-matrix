@@ -6,21 +6,18 @@ import android.widget.Button;
 import java.util.ArrayList;
 
 public class GridButton {
-    private ArrayList<String> values;
-    private int currentIndex;
+    private String value;
     private Button button;
 
     public GridButton()
     {
-        values = new ArrayList<String>();
-        currentIndex = -1;
+        value = "";
     }
 
     public void SetButton(Button button)
     {
         this.button = button;
-        button.setText(values.get(values.size() - 1));
-        SetButtonEnabled(true);
+        SetButtonText(value);
     }
 
     public Button GetButton()
@@ -28,54 +25,45 @@ public class GridButton {
         return button;
     }
 
-    public void AddValue(String value)
+    public void SetValue(String value)
     {
-        values.add(value);
-        ++currentIndex;
+        this.value = value;
+        SetButtonText(value);
     }
 
-    public int GetValuesIndex()
+    public String GetValue()
     {
-        return values.size();
+        return value;
     }
 
-    public String GetTopValue()
+    public void TakeValue()
     {
-        return values.get(currentIndex);
+        SetButtonText("");
     }
 
-    public void TakeTopValue()
+    public void UndoTakeValue()
     {
-        --currentIndex;
-        if(currentIndex >= 0)
-        {
-            button.setText(values.get(currentIndex));
-        }
-        else
-        {
-            button.setText("");
-        }
-        SetButtonEnabled(false);
+        SetButtonText(value);
     }
 
-    public void UndoTakeTopValue()
+    public void RemoveValue()
     {
-        ++currentIndex;
-        button.setText(values.get(currentIndex));
-        SetButtonEnabled(true);
+        value = "";
+        SetButtonText("");
     }
 
-    public void SetButtonEnabled(boolean enabled)
+    public boolean IsOccupied()
     {
-        if(currentIndex < 0)
-        {
-            button.setEnabled(false);
-            button.setBackgroundColor(Color.parseColor("#C1C1C1"));
-        }
-        else
-        {
-            button.setEnabled(enabled);
-            button.setBackgroundColor(Color.parseColor(enabled ? "#ffecb8" : "#C1C1C1"));
-        }
+        return !value.equals("");
+    }
+
+    public void SetButtonText(String text)
+    {
+        if(button == null)
+            return;
+        button.setText(text);
+        boolean enabled = !text.equals("");
+        button.setEnabled(enabled);
+        button.setBackgroundColor(Color.parseColor(enabled ? "#ffecb8" : "#C1C1C1"));
     }
 }

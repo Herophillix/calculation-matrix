@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void InitializeGameManager()
     {
-        gameManager = new GameManager(HORIZONTAL_SIZE, VERTICAL_SIZE, 9);
+        gameManager = new GameManager(HORIZONTAL_SIZE, VERTICAL_SIZE, 2);
         Button[][] buttons = new Button[VERTICAL_SIZE][HORIZONTAL_SIZE];
 
         buttons[0][0] = findViewById(R.id.grid_1);
@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void OnGridButtonSelected(GridButton gridButton)
     {
-        String value = gridButton.GetTopValue();
-        if(isNumeric(value))
+        String value = gridButton.GetValue();
+        if(MathHelper.isNumeric(value))
         {
             for(EquationButton digits: digitButtons)
             {
@@ -109,15 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 digits.RemoveOccupyingButton();
             }
             signButton.RemoveOccupyingButton();
-        }
-    }
-
-    public static boolean isNumeric(String str) {
-        try {
-            Integer.parseInt(str);
-            return true;
-        } catch(NumberFormatException e){
-            return false;
+            gameManager.FillEmptyGridButton();
         }
     }
 }

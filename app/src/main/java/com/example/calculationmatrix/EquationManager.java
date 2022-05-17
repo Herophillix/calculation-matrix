@@ -51,4 +51,23 @@ public class EquationManager {
                 return false;
         }
     }
+
+    public static String GetResult(String a, String sign, String b)
+    {
+        int int_a = Integer.parseInt(a);
+        int int_b = Integer.parseInt(b);
+
+
+        switch (sign)
+        {
+            case "+":
+                return Integer.toString(int_a + int_b);
+            case "-":
+                return Integer.toString(int_a - int_b);
+            case "X":
+                return Integer.toString(int_a * int_b);
+            default:
+                return "";
+        }
+    }
 }
