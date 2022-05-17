@@ -16,10 +16,10 @@ public class EquationButton {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RemoveOccupyingButton(false);
+                UndoOccupyingButton();
             }
         });
-        SetButtonEnabled(false);
+        SetButtonText("");
         occupyingGridButton = null;
     }
 
@@ -31,17 +31,22 @@ public class EquationButton {
     public void SetOccupyingButton(GridButton gridButton)
     {
         occupyingGridButton = gridButton;
-        this.button.setText(gridButton.GetButton().getText());
-        SetButtonEnabled(true);
+        SetButtonText(gridButton.GetButton().getText().toString());
+
+        gridButton.TakeTopValue();
     }
 
-    public void RemoveOccupyingButton(boolean isSolved)
+    private void UndoOccupyingButton()
     {
-        if(!isSolved)
-            occupyingGridButton.UndoTakeTopValue();
+        occupyingGridButton.UndoTakeTopValue();
+        RemoveOccupyingButton();
+    }
+
+    public void RemoveOccupyingButton()
+    {
+        occupyingGridButton.SetButtonEnabled(true);
         occupyingGridButton = null;
-        this.button.setText("");
-        SetButtonEnabled(false);
+        SetButtonText("");
     }
 
     public boolean IsOccupied()
@@ -49,8 +54,10 @@ public class EquationButton {
         return occupyingGridButton != null;
     }
 
-    public void SetButtonEnabled(boolean enabled)
+    private void SetButtonText(String text)
     {
+        button.setText(text);
+        boolean enabled = !text.equals("");
         button.setEnabled(enabled);
         button.setBackgroundColor(Color.parseColor(enabled ? "#ffecb8" : "#C1C1C1"));
     }

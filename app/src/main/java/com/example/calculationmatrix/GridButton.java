@@ -1,5 +1,6 @@
 package com.example.calculationmatrix;
 
+import android.graphics.Color;
 import android.widget.Button;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class GridButton {
     {
         this.button = button;
         button.setText(values.get(values.size() - 1));
+        SetButtonEnabled(true);
     }
 
     public Button GetButton()
@@ -45,12 +47,35 @@ public class GridButton {
     public void TakeTopValue()
     {
         --currentIndex;
-        button.setText(values.get(currentIndex));
+        if(currentIndex >= 0)
+        {
+            button.setText(values.get(currentIndex));
+        }
+        else
+        {
+            button.setText("");
+        }
+        SetButtonEnabled(false);
     }
 
     public void UndoTakeTopValue()
     {
         ++currentIndex;
         button.setText(values.get(currentIndex));
+        SetButtonEnabled(true);
+    }
+
+    public void SetButtonEnabled(boolean enabled)
+    {
+        if(currentIndex < 0)
+        {
+            button.setEnabled(false);
+            button.setBackgroundColor(Color.parseColor("#C1C1C1"));
+        }
+        else
+        {
+            button.setEnabled(enabled);
+            button.setBackgroundColor(Color.parseColor(enabled ? "#ffecb8" : "#C1C1C1"));
+        }
     }
 }

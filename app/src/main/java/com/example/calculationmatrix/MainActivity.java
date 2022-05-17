@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
                 if(!digits.IsOccupied())
                 {
                     digits.SetOccupyingButton(gridButton);
-                    gridButton.TakeTopValue();
                     break;
                 }
             }
@@ -87,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
             if(!signButton.IsOccupied())
             {
                 signButton.SetOccupyingButton(gridButton);
-                gridButton.TakeTopValue();
             }
         }
 
@@ -108,9 +106,9 @@ public class MainActivity extends AppCompatActivity {
         {
             for(EquationButton digits: digitButtons)
             {
-                digits.RemoveOccupyingButton(true);
+                digits.RemoveOccupyingButton();
             }
-            signButton.RemoveOccupyingButton(true);
+            signButton.RemoveOccupyingButton();
         }
     }
 
