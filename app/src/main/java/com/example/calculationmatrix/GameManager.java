@@ -1,29 +1,25 @@
 package com.example.calculationmatrix;
 
-import com.example.calculationmatrix.equation.EquationMaker;
-import com.example.calculationmatrix.grid.Grid;
-
 import java.util.Random;
 
 public class GameManager {
-    private Grid[][] grids;
+    private GridButton[][] gridButtons;
 
     public GameManager(int h, int v, int numOfEquations)
     {
-        grids = new Grid[h][v];
+        gridButtons = new GridButton[h][v];
         for(int i = 0; i < h; ++i)
         {
             for(int j = 0; j < v; ++j)
             {
-                Grid grid = new Grid();
-                grids[i][j] = grid;
+                GridButton gridButton = new GridButton();
+                gridButtons[i][j] = gridButton;
             }
         }
 
-        EquationMaker eq = new EquationMaker();
+        EquationManager eq = new EquationManager();
         Random rand = new Random();
-        int horizontalSize = grids.length;
-        int verticalSize = grids[0].length;
+        int index = 0;
 
         for(int i = 0; i < numOfEquations; ++i)
         {
@@ -34,10 +30,10 @@ public class GameManager {
                 while(!isGridSmallest)
                 {
                     int smallestIndex = GetLowestIndex();
-                    Grid randomGrid = grids[rand.nextInt(h)][rand.nextInt(v)];
-                    if (randomGrid.GetValuesIndex() == smallestIndex)
+                    GridButton randomGridButton = gridButtons[rand.nextInt(h)][rand.nextInt(v)];
+                    if (randomGridButton.GetValuesIndex() == smallestIndex)
                     {
-                        randomGrid.AddValue(value);
+                        randomGridButton.AddValue(value);
                         isGridSmallest = true;
                     }
                 }
@@ -48,11 +44,11 @@ public class GameManager {
     private int GetLowestIndex()
     {
         int smallest = -1;
-        for(int i = 0; i < grids.length; ++i)
+        for(int i = 0; i < gridButtons.length; ++i)
         {
-            for(int j = 0; j < grids[i].length; ++j)
+            for(int j = 0; j < gridButtons[i].length; ++j)
             {
-                int index = grids[i][j].GetValuesIndex();
+                int index = gridButtons[i][j].GetValuesIndex();
                 if(index < smallest || smallest == -1)
                 {
                     smallest = index;
@@ -62,8 +58,8 @@ public class GameManager {
         return smallest;
     }
 
-    public Grid GetGrid(int x, int y)
+    public GridButton GetGrid(int x, int y)
     {
-        return grids[x][y];
+        return gridButtons[x][y];
     }
 }

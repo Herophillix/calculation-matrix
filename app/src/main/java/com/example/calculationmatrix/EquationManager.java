@@ -1,8 +1,8 @@
-package com.example.calculationmatrix.equation;
+package com.example.calculationmatrix;
 
 import java.util.Random;
 
-public class EquationMaker {
+public class EquationManager {
     public String[] CreateEquation(int lowerBound, int upperBound)
     {
         Random rand = new Random();

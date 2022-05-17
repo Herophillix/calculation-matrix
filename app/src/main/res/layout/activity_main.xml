@@ -39,7 +39,7 @@
                 android:backgroundTint="@color/grid_background"
                 android:text="1"
                 android:textColor="@color/text_color"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1" />
 
@@ -52,7 +52,7 @@
                 android:backgroundTint="@color/grid_background"
                 android:text="1"
                 android:textColor="@color/text_color"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1" />
 
@@ -65,7 +65,7 @@
                 android:backgroundTint="@color/grid_background"
                 android:text="1"
                 android:textColor="@color/text_color"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1" />
 
@@ -78,7 +78,7 @@
                 android:backgroundTint="@color/grid_background"
                 android:text="1"
                 android:textColor="@color/text_color"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1" />
 
@@ -91,7 +91,7 @@
                 android:backgroundTint="@color/grid_background"
                 android:text="1"
                 android:textColor="@color/text_color"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1" />
 
@@ -104,7 +104,7 @@
                 android:backgroundTint="@color/grid_background"
                 android:text="1"
                 android:textColor="@color/text_color"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1" />
 
@@ -117,7 +117,7 @@
                 android:backgroundTint="@color/grid_background"
                 android:text="1"
                 android:textColor="@color/text_color"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1" />
 
@@ -130,7 +130,7 @@
                 android:backgroundTint="@color/grid_background"
                 android:text="1"
                 android:textColor="@color/text_color"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1" />
 
@@ -143,7 +143,7 @@
                 android:backgroundTint="@color/grid_background"
                 android:text="1"
                 android:textColor="@color/text_color"
-                android:textSize="60sp"
+                android:textSize="50sp"
                 app:layout_columnWeight="1"
                 app:layout_rowWeight="1" />
 

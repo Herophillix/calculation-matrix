@@ -3,48 +3,111 @@ package com.example.calculationmatrix;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
-    private final int HORIZONTAL = 3;
-    private final int VERTICAL = 3;
+    private final int HORIZONTAL_SIZE = 3;
+    private final int VERTICAL_SIZE = 3;
 
     private GameManager gameManager;
-
-    private Button[][] gridButtons;
+    private ArrayList<EquationButton> digitButtons;
+    private EquationButton signButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        InitializeGridButtons();
         InitializeGameManager();
+        InitializeEquationButtons();
     }
 
     private void InitializeGameManager()
     {
-        gameManager = new GameManager(HORIZONTAL, VERTICAL, 12);
+        gameManager = new GameManager(HORIZONTAL_SIZE, VERTICAL_SIZE, 12);
+        Button[][] buttons = new Button[VERTICAL_SIZE][HORIZONTAL_SIZE];
 
-        for(int i = 0; i < HORIZONTAL; ++i)
+        buttons[0][0] = findViewById(R.id.grid_1);
+        buttons[1][0] = findViewById(R.id.grid_2);
+        buttons[2][0] = findViewById(R.id.grid_3);
+        buttons[0][1] = findViewById(R.id.grid_4);
+        buttons[1][1] = findViewById(R.id.grid_5);
+        buttons[2][1] = findViewById(R.id.grid_6);
+        buttons[0][2] = findViewById(R.id.grid_7);
+        buttons[1][2] = findViewById(R.id.grid_8);
+        buttons[2][2] = findViewById(R.id.grid_9);
+
+        for(int i = 0; i < HORIZONTAL_SIZE; ++i)
         {
-            for(int j = 0; j < VERTICAL; ++i)
+            for(int j = 0; j < VERTICAL_SIZE; ++j)
             {
-                gridButtons[i][j].setText(gameManager.GetGrid(i,j).GetValue());
+                Button button = buttons[i][j];
+                GridButton gridButton = gameManager.GetGrid(i, j);
+                gridButton.SetButton(button);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        OnGridButtonSelected(gridButton);
+                    }
+                });
             }
         }
     }
 
-    private void InitializeGridButtons()
+    private void InitializeEquationButtons()
     {
-        gridButtons = new Button[HORIZONTAL][VERTICAL];
-        gridButtons[0][0] = findViewById(R.id.grid_1);
-        gridButtons[1][0] = findViewById(R.id.grid_2);
-        gridButtons[2][0] = findViewById(R.id.grid_3);
-        gridButtons[0][1] = findViewById(R.id.grid_4);
-        gridButtons[1][1] = findViewById(R.id.grid_5);
-        gridButtons[2][1] = findViewById(R.id.grid_6);
-        gridButtons[0][2] = findViewById(R.id.grid_7);
-        gridButtons[1][2] = findViewById(R.id.grid_8);
-        gridButtons[2][2] = findViewById(R.id.grid_9);
+        digitButtons = new ArrayList<>();
+        digitButtons.add(new EquationButton(findViewById(R.id.lhs_1)));
+        digitButtons.add(new EquationButton(findViewById(R.id.lhs_2)));
+        digitButtons.add(new EquationButton(findViewById(R.id.ans)));
+
+        signButton = new EquationButton(findViewById(R.id.lhs_sign));
+    }
+
+    private void OnGridButtonSelected(GridButton gridButton)
+    {
+        String value = gridButton.GetTopValue();
+        if(isNumeric(value))
+        {
+            for(EquationButton digits: digitButtons)
+            {
+                if(!digits.IsOccupied())
+                {
+                    digits.SetOccupyingButton(gridButton);
+                    gridButton.TakeTopValue();
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if(!signButton.IsOccupied())
+            {
+                signButton.SetOccupyingButton(gridButton);
+                gridButton.TakeTopValue();
+            }
+        }
+
+        for(EquationButton digits: digitButtons)
+        {
+            if(!digits.IsOccupied())
+            {
+                return;
+            }
+        }
+        if(!signButton.IsOccupied())
+            return;
+    }
+
+    public static boolean isNumeric(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch(NumberFormatException e){
+            return false;
+        }
     }
 }
