@@ -2,6 +2,7 @@ package com.example.calculationmatrix;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -16,6 +17,10 @@ import java.sql.Time;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String EXTRA_TITLE = "com.example.calculationmatrix.EXTRA_TITLE";
+    public static final String EXTRA_CONTENT = "com.example.calculationmatrix.EXTRA_CONTENT";
+    public static final String EXTRA_BUTTON_TEXT = "com.example.calculationmatrix.EXTRA_BUTTON_TEXT";
+
     private final int HORIZONTAL_SIZE = 3;
     private final int VERTICAL_SIZE = 3;
     final long TIME_LIMIT = 30000;
@@ -38,8 +43,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         InitializeGameManager();
         InitializeEquationButtons();
-        InitializeProgressBar();
         InitializeScore();
+
+        Intent intent = getIntent();
+        boolean isFromPopup = intent.getBooleanExtra(PopupMenuActivity.EXTRA_FROM_POPUP, false);
+        if(isFromPopup)
+        {
+            InitializeProgressBar();
+        }
+        else
+        {
+            CreatePopup("Calculation Matrix", "Select the grids to make a correct mathematical equation." +
+                    "\n Don't let the timer run out and score as high as you can!", "Start");
+        }
     }
 
     private void InitializeGameManager()
@@ -116,22 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
                 final MediaPlayer GAME_OVER = MediaPlayer.create(instance, R.raw.game_over);
                 GAME_OVER.start();
+                SetAllButtonsEnabled(false, StaticColor.GRAY);
 
-                Toast toast = Toast.makeText(getApplicationContext(), "Game Over!", Toast.LENGTH_LONG);
-                toast.show();
-                CountDownTimer delay = new CountDownTimer(3000, INTERVAL) {
-                    @Override
-                    public void onTick(long l) {
-
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        finish();
-                        startActivity(getIntent());
-                    }
-                };
-                delay.start();
+                CreatePopup("Game Over!", "Score: " + userScore, "Restart");
             }
         };
         countDownTimer.start();
@@ -143,6 +146,15 @@ public class MainActivity extends AppCompatActivity {
         UpdateScore();
     }
 
+    private void CreatePopup(String title, String content, String buttonText)
+    {
+        Intent intent = new Intent(MainActivity.this, PopupMenuActivity.class);
+        intent.putExtra(EXTRA_TITLE, title);
+        intent.putExtra(EXTRA_CONTENT, content);
+        intent.putExtra(EXTRA_BUTTON_TEXT, buttonText);
+        startActivity(intent);
+    }
+
     private void UpdateScore()
     {
         scoreText.setText("Score: " + Integer.toString(userScore));
@@ -152,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     {
         userScore += add_value;
         UpdateScore();
-        long added_time = Math.max(5000 - userScore * 300, 2000);
+        long added_time = Math.max(5000 - (userScore * (userScore - 1)) * 7, 2500);
         CreateCountdownTimer(Math.min(timeLeft + added_time , TIME_LIMIT), INTERVAL);
     }
 
@@ -191,42 +203,61 @@ public class MainActivity extends AppCompatActivity {
         String sign = signButton.GetText();
         String b = digitButtons.get(1).GetText();
         String c = digitButtons.get(2).GetText();
-        if(EquationManager.CheckEquation(a, sign, b, c))
+
+        boolean isEquationCorrect = EquationManager.CheckEquation(a, sign, b, c);
+
+        SetAllButtonsEnabled(false, isEquationCorrect ? StaticColor.LIGHT_GREEN : StaticColor.LIGHT_RED);
+        if(isEquationCorrect)
         {
-            for(EquationButton digits: digitButtons)
-            {
-                digits.SetEnabled(false);
-            }
-            signButton.SetEnabled(false);
-            gameManager.SetEnabled(false);
             final MediaPlayer EQUATION_CORRECT = MediaPlayer.create(this, R.raw.equation_correct);
             EQUATION_CORRECT.start();
-            CountDownTimer timer = new CountDownTimer(500, INTERVAL) {
-                @Override
-                public void onTick(long l) {
-
-                }
-
-                @Override
-                public void onFinish() {
-                    for(EquationButton digits: digitButtons)
-                    {
-                        digits.SetEnabled(true);
-                        digits.RemoveOccupyingButton();
-                    }
-                    signButton.SetEnabled(true);
-                    signButton.RemoveOccupyingButton();
-                    gameManager.SetEnabled(true);
-                    gameManager.FillEmptyGridButton();
-                    AddScore(1);
-                }
-            };
-            timer.start();
+            AddScore(1);
         }
         else
         {
             final MediaPlayer EQUATION_WRONG = MediaPlayer.create(this, R.raw.equation_wrong);
             EQUATION_WRONG.start();
+            CreateCountdownTimer(Math.min(timeLeft - 5000 , TIME_LIMIT), INTERVAL);
         }
+
+        CountDownTimer timer = new CountDownTimer(500, INTERVAL) {
+            @Override
+            public void onTick(long l) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                SetAllButtonsEnabled(true, StaticColor.LIGHT_YELLOW);
+                if(isEquationCorrect)
+                {
+                    for(EquationButton digits: digitButtons)
+                    {
+                        digits.RemoveOccupyingButton();
+                    }
+                    signButton.RemoveOccupyingButton();
+                    gameManager.FillEmptyGridButton();
+                }
+                else
+                {
+                    for(EquationButton digits: digitButtons)
+                    {
+                        digits.UndoOccupyingButton();
+                    }
+                    signButton.UndoOccupyingButton();
+                }
+            }
+        };
+        timer.start();
+    }
+
+    private void SetAllButtonsEnabled(boolean enabled, String color)
+    {
+        for(EquationButton digits: digitButtons)
+        {
+            digits.SetEnabled(enabled, color);
+        }
+        signButton.SetEnabled(enabled, color);
+        gameManager.SetEnabled(enabled);
     }
 }

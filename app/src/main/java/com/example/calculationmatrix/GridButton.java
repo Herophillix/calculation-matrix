@@ -64,6 +64,13 @@ public class GridButton {
         button.setText(text);
         boolean enabled = !text.equals("");
         button.setEnabled(enabled);
-        button.setBackgroundColor(Color.parseColor(enabled ? "#ffecb8" : "#C1C1C1"));
+        if(enabled)
+        {
+            button.setBackgroundColor(Color.parseColor(MathHelper.isNumeric(value) ? StaticColor.LIGHT_YELLOW : StaticColor.LIGHT_BLUE));
+        }
+        else
+        {
+            button.setBackgroundColor(Color.parseColor(StaticColor.GRAY));
+        }
     }
 }

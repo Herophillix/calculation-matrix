@@ -38,7 +38,7 @@ public class EquationButton {
         gridButton.TakeValue();
     }
 
-    private void UndoOccupyingButton()
+    public void UndoOccupyingButton()
     {
         occupyingGridButton.UndoTakeValue();
         occupyingGridButton = null;
@@ -62,11 +62,19 @@ public class EquationButton {
         button.setText(text);
         boolean enabled = !text.equals("");
         button.setEnabled(enabled);
-        button.setBackgroundColor(Color.parseColor(enabled ? "#ffecb8" : "#C1C1C1"));
+        if(enabled)
+        {
+            button.setBackgroundColor(Color.parseColor(MathHelper.isNumeric(text) ? StaticColor.LIGHT_YELLOW : StaticColor.LIGHT_BLUE));
+        }
+        else
+        {
+            button.setBackgroundColor(Color.parseColor(StaticColor.GRAY));
+        }
     }
 
-    public void SetEnabled(boolean enabled)
+    public void SetEnabled(boolean enabled, String color)
     {
         button.setEnabled(enabled);
+        button.setBackgroundColor(Color.parseColor(color));
     }
 }
