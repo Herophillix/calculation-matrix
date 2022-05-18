@@ -37,10 +37,13 @@ public class MainActivity extends AppCompatActivity {
     int userScore;
     TextView scoreText;
 
+    SoundPlayer soundPlayer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        InitializeSoundPlayer();
         InitializeGameManager();
         InitializeEquationButtons();
         InitializeScore();
@@ -58,6 +61,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void InitializeSoundPlayer()
+    {
+        soundPlayer = new SoundPlayer(this);
+    }
+
     private void InitializeGameManager()
     {
         gameManager = new GameManager(HORIZONTAL_SIZE, VERTICAL_SIZE, 2);
@@ -73,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
         buttons[1][2] = findViewById(R.id.grid_8);
         buttons[2][2] = findViewById(R.id.grid_9);
 
-        final MediaPlayer GRID_CLICK = MediaPlayer.create(this, R.raw.grid_click);
-
         for(int i = 0; i < HORIZONTAL_SIZE; ++i)
         {
             for(int j = 0; j < VERTICAL_SIZE; ++j)
@@ -86,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         OnGridButtonSelected(gridButton);
-                        GRID_CLICK.start();
+                        SoundPlayer.GRID_CLICK.start();
                     }
                 });
             }
@@ -95,14 +101,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void InitializeEquationButtons()
     {
-        final MediaPlayer GRID_RETURN = MediaPlayer.create(this, R.raw.grid_return);
-
         digitButtons = new ArrayList<>();
-        digitButtons.add(new EquationButton(findViewById(R.id.lhs_1), GRID_RETURN));
-        digitButtons.add(new EquationButton(findViewById(R.id.lhs_2), GRID_RETURN));
-        digitButtons.add(new EquationButton(findViewById(R.id.ans), GRID_RETURN));
+        digitButtons.add(new EquationButton(findViewById(R.id.lhs_1), SoundPlayer.GRID_RETURN));
+        digitButtons.add(new EquationButton(findViewById(R.id.lhs_2), SoundPlayer.GRID_RETURN));
+        digitButtons.add(new EquationButton(findViewById(R.id.ans), SoundPlayer.GRID_RETURN));
 
-        signButton = new EquationButton(findViewById(R.id.lhs_sign), GRID_RETURN);
+        signButton = new EquationButton(findViewById(R.id.lhs_sign), SoundPlayer.GRID_RETURN);
     }
 
     private void InitializeProgressBar()
@@ -130,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
                 progressBar.setProgress(100);
 
-                final MediaPlayer GAME_OVER = MediaPlayer.create(instance, R.raw.game_over);
-                GAME_OVER.start();
+                SoundPlayer.GAME_OVER.start();
                 SetAllButtonsEnabled(false, StaticColor.GRAY);
 
                 CreatePopup("Game Over!", "Score: " + userScore, "Restart");
@@ -209,14 +212,12 @@ public class MainActivity extends AppCompatActivity {
         SetAllButtonsEnabled(false, isEquationCorrect ? StaticColor.LIGHT_GREEN : StaticColor.LIGHT_RED);
         if(isEquationCorrect)
         {
-            final MediaPlayer EQUATION_CORRECT = MediaPlayer.create(this, R.raw.equation_correct);
-            EQUATION_CORRECT.start();
+            SoundPlayer.EQUATION_CORRECT.start();
             AddScore(1);
         }
         else
         {
-            final MediaPlayer EQUATION_WRONG = MediaPlayer.create(this, R.raw.equation_wrong);
-            EQUATION_WRONG.start();
+            SoundPlayer.EQUATION_WRONG.start();
             CreateCountdownTimer(Math.min(timeLeft - 5000 , TIME_LIMIT), INTERVAL);
         }
 
